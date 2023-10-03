@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:qadritravels/themes/colors.dart';
+import 'package:alutabus/themes/colors.dart';
 
 class CustomDateSelector extends StatelessWidget {
   final bool? isSelected;
@@ -7,7 +7,12 @@ class CustomDateSelector extends StatelessWidget {
   final int? currentDate;
   final GestureTapCallback? onTap;
 
-  const CustomDateSelector({Key? key, this.isSelected, this.currentDay, this.currentDate, this.onTap})
+  const CustomDateSelector(
+      {Key? key,
+      this.isSelected,
+      this.currentDay,
+      this.currentDate,
+      this.onTap})
       : super(key: key);
 
   @override
@@ -25,7 +30,7 @@ class CustomDateSelector extends StatelessWidget {
               child: Card(
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8.0)),
-                color: isSelected == true ? radicalRed : bermudaGray,
+                color: isSelected == true ? radicalGreen : bermudaGray,
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
@@ -40,7 +45,8 @@ class CustomDateSelector extends StatelessWidget {
                       ),
                       Text(
                         '$currentDate',
-                        style: const TextStyle(color: Colors.white, fontSize: 42.0),
+                        style: const TextStyle(
+                            color: Colors.white, fontSize: 42.0),
                       )
                     ],
                   ),

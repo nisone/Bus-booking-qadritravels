@@ -1,10 +1,13 @@
+import 'dart:async';
 import 'dart:math';
 
+import 'package:alutabus/screens/homepage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:qadritravels/testing.dart';
-import 'package:qadritravels/themes/colors.dart';
-import 'package:qadritravels/widgets/fancy_background.dart';
+import 'package:alutabus/themes/colors.dart';
+import 'package:alutabus/widgets/fancy_background.dart';
+import 'package:get/get.dart';
 
 class StartScreen extends StatelessWidget {
   const StartScreen({Key? key}) : super(key: key);
@@ -20,7 +23,7 @@ class StartScreen extends StatelessWidget {
           speed: 1.0,
         )),
         onBottom(AnimatedWave(
-          color: radicalRed.withOpacity(0.2),
+          color: radicalGreen.withOpacity(0.2),
           height: 120,
           speed: 0.9,
           offset: pi,
@@ -69,6 +72,25 @@ class SignInUiState extends State<SignInUi> {
   final _emailFocus = FocusNode();
   final _passwordFocus = FocusNode();
   bool _isObscureText = true;
+
+  StreamSubscription<User?>? authState;
+
+  @override
+  void initState() {
+    authState = FirebaseAuth.instance.authStateChanges().listen((userEvent) {
+      if (userEvent != null) {
+        _showMessage('logged in as ${userEvent.uid}');
+        Get.to(const MyHomePage());
+      }
+    });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    authState?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -151,10 +173,7 @@ class SignInUiState extends State<SignInUi> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         OutlinedButton(
-                            onPressed: () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const Testing())),
+                            onPressed: _login,
                             child: const Text('Login',
                                 style: TextStyle(
                                     color: backgroundColor, fontSize: 18))),
@@ -166,7 +185,7 @@ class SignInUiState extends State<SignInUi> {
                           width: 16.0,
                         ),
                         OutlinedButton(
-                            onPressed: () {},
+                            onPressed: _register,
                             child: const Text('Register',
                                 style: TextStyle(
                                     color: backgroundColor, fontSize: 18))),
@@ -252,5 +271,63 @@ class SignInUiState extends State<SignInUi> {
       BuildContext context, FocusNode emailFocus, FocusNode passwordFocus) {
     emailFocus.unfocus();
     FocusScope.of(context).requestFocus(passwordFocus);
+  }
+
+  Future<void> _register() async {
+    String password = _passwordController.text;
+    String email = _emailController.text;
+
+    if (email.isEmpty || password.isEmpty) {
+      debugPrint('invalid email or password');
+      _showError('Invalid email or passworc');
+      return;
+    }
+
+    try {
+      UserCredential userCredential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(email: email, password: password);
+      _showMessage('register as ${userCredential.user!.uid}');
+    } on Exception catch (e) {
+      e.printError();
+      if (e is FirebaseAuthException) {
+        _showError(e.message.toString());
+      }
+    }
+  }
+
+  Future<void> _login() async {
+    String password = _passwordController.text;
+    String email = _emailController.text;
+
+    if (email.isEmpty || password.isEmpty) {
+      debugPrint('invalid email or password');
+      _showError('Invalid email or passworc');
+      return;
+    }
+
+    try {
+      UserCredential userCredential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email, password: password);
+      _showMessage('login as ${userCredential.user!.uid}');
+    } on Exception catch (e) {
+      e.printError();
+      if (e is FirebaseAuthException) {
+        _showError(e.message.toString());
+      }
+    }
+  }
+
+  void _showError(String message) {
+    Get.showSnackbar(GetSnackBar(
+      title: 'Error!',
+      message: message,
+    ));
+  }
+
+  void _showMessage(String message) {
+    Get.showSnackbar(GetSnackBar(
+      title: 'Notification',
+      message: message,
+    ));
   }
 }

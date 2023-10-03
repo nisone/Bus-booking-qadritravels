@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:qadritravels/themes/colors.dart';
-import 'package:qadritravels/widgets/custom_dotted_line.dart';
+import 'package:alutabus/themes/colors.dart';
+import 'package:alutabus/widgets/custom_dotted_line.dart';
 
 class CustomStepper extends StatelessWidget {
   const CustomStepper({super.key});
@@ -12,7 +12,7 @@ class CustomStepper extends StatelessWidget {
       children: <Widget>[
         const Icon(
           FontAwesomeIcons.circleDot,
-          color: radicalRed,
+          color: radicalGreen,
         ),
         CustomPaint(
           painter: LineDashedPainter(

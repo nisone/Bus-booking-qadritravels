@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:qadritravels/screens/myaccount.dart';
-import 'package:qadritravels/themes/colors.dart';
+import 'package:alutabus/screens/myaccount.dart';
+import 'package:alutabus/themes/colors.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final double height;
@@ -26,14 +26,16 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 child: Text(
                   '${todaysDate.day}',
                   style: const TextStyle(
-                    color: radicalRed,
+                    color: radicalGreen,
                     fontSize: 48,
                   ),
                 ),
               ),
-              Text(
-                weekday,
-                style: const TextStyle(color: smoky, fontSize: 24),
+              Expanded(
+                child: Text(
+                  weekday,
+                  style: const TextStyle(color: smoky, fontSize: 18),
+                ),
               ),
             ],
           ),

@@ -1,4 +1,4 @@
-package com.qadritravels.qadritravels
+package com.alutabus.alutabus
 
 import io.flutter.embedding.android.FlutterActivity
 

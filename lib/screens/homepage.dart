@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_offline/flutter_offline.dart';
-import 'package:qadritravels/themes/colors.dart';
-import 'package:qadritravels/utils/offline_management.dart';
-import 'package:qadritravels/widgets/custom_appbar.dart';
-import 'package:qadritravels/widgets/custom_bottom_search.dart';
-import 'package:qadritravels/widgets/custom_recent_trip_card.dart';
+import 'package:alutabus/widgets/custom_appbar.dart';
+import 'package:alutabus/widgets/custom_bottom_search.dart';
+import 'package:alutabus/widgets/custom_recent_trip_card.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
@@ -14,31 +11,19 @@ class MyHomePage extends StatefulWidget {
 }
 
 class MyHomePageState extends State<MyHomePage> {
-  static late ConnectivityResult result;
-  final bool connectionState = result != ConnectivityResult.none;
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: const CustomAppBar(
-        height: 150,
-      ),
-      floatingActionButton: Align(
-        alignment: const Alignment(0.90, 0.50),
-        child: FloatingActionButton(
-          backgroundColor: bermudaGray,
-          child: const Icon(Icons.search),
-          onPressed: () {},
+    return const Scaffold(
+        backgroundColor: Colors.white,
+        appBar: CustomAppBar(
+          height: 150,
         ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      body: connectionState
-          ? const MainBody()
-          : const OfflineManagement(
-              child: Text('No Internet!'),
-            ),
-    );
+        body: MainBody());
   }
 }
 
@@ -49,27 +34,52 @@ class MainBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Text('Recent Trips'),
-            ),
-            CustomRecentTripCard(),
-          ],
-        ),
-        Flexible(
-          child: Align(
-            alignment: Alignment.bottomCenter,
-            child: CustomBottomSearch(),
+    TextEditingController fromController = TextEditingController(),
+        destinationController = TextEditingController();
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text('Recent Trips'),
+              ),
+              SizedBox(
+                height: 250,
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  children: const [
+                    CustomRecentTripCard(
+                      dateOfTheMonth: 23,
+                      dayOfTheMonth: 'Mon',
+                      from: 'Zaria',
+                      destination: 'Samaru',
+                    ),
+                    CustomRecentTripCard(
+                      dateOfTheMonth: 24,
+                      dayOfTheMonth: 'Tue',
+                      from: 'Main Campus',
+                      destination: 'Congo Campus',
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-        ),
-      ],
+          const SizedBox(
+            height: 20,
+          ),
+          CustomBottomSearch(
+            fromController: fromController,
+            destinationController: destinationController,
+          )
+        ],
+      ),
     );
   }
 }

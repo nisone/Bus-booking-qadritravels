@@ -1,7 +1,10 @@
+import 'package:alutabus/utils/seat_arrangement.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:qadritravels/themes/colors.dart';
-import 'package:qadritravels/utils/bus.dart';
+import 'package:alutabus/themes/colors.dart';
+import 'package:alutabus/utils/bus.dart';
 
 class SearchBuses extends StatefulWidget {
   final String? from;
@@ -15,14 +18,22 @@ class SearchBuses extends StatefulWidget {
 
 class SearchBusesState extends State<SearchBuses> {
   final List<Bus> buses = [
-    Bus('Aligarh - Noida', 'NON-AC', 250),
-    Bus('Delhi - Aligarh', 'NON-AC', 250),
-    Bus('Lucknow - Delhi', 'AC', 650),
-    Bus('Lucknow - Aligarh', 'AC', 450),
-    Bus('Ahmedabad - Delhi', 'AC', 1500),
-    Bus('Mumbai - Delhi', 'AC', 1700),
-    Bus('Lucknow - Kanpur', 'AC', 350),
-    Bus('Mumbai - Pune', 'AC', 210),
+    Bus('bus_id_c7890', 'Phase II', 'Medicine', defaultSeats, 'NON-AC', 250,
+        '09:00', '10:00'),
+    Bus('bus_id_c7890', 'Gym', 'Phase II', defaultSeats, 'NON-AC', 250, '09:00',
+        '10:00'),
+    Bus('bus_id_c7890', 'Samaru', 'Congo', defaultSeats, 'AC', 650, '09:00',
+        '10:00'),
+    Bus('bus_id_c7890', 'Samaru', 'Phase II', defaultSeats, 'AC', 450, '09:00',
+        '10:00'),
+    Bus('bus_id_c7890', 'ABUTH Shika', 'Congo', defaultSeats, 'AC', 1500,
+        '09:00', '10:00'),
+    Bus('bus_id_c7890', 'Flyover', 'Congo', defaultSeats, 'AC', 1700, '09:00',
+        '10:00'),
+    Bus('bus_id_c7890', 'Samaru', 'IAR', defaultSeats, 'AC', 350, '09:00',
+        '10:00'),
+    Bus('bus_id_c7890', 'Flyover', 'ABUTH Shika', defaultSeats, 'AC', 210,
+        '09:00', '10:00'),
   ];
 
   @override
@@ -42,12 +53,46 @@ class SearchBusesState extends State<SearchBuses> {
       ),
       body: Padding(
         padding: const EdgeInsets.only(top: 16.0),
-        child: ListView.builder(
-            itemCount: buses.length,
-            itemBuilder: (context, index) {
-              return BusCard(
-                buses: buses,
-                index: index,
+        child: FutureBuilder(
+            future: FirebaseFirestore.instance
+                .collection('buses')
+                .where('from', isEqualTo: widget.from!)
+                .where('destination', isEqualTo: widget.destination!)
+                .get(),
+            builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              if (snapshot.hasData) {
+                snapshot.data!.docs.length.printInfo();
+                var busesDocs = snapshot.data!.docs
+                    .map<Bus>((busDoc) => Bus(
+                        busDoc['id'],
+                        busDoc['from'],
+                        busDoc['destination'],
+                        (busDoc['seats']).map((element) {
+                          return element
+                              .split(',')
+                              .map((e) => int.tryParse(e))
+                              .toList();
+                        }).toList(),
+                        busDoc['busType'],
+                        busDoc['ticketPrice'],
+                        busDoc['departureTime'],
+                        busDoc['arrivalTime']))
+                    .toList();
+                return ListView.builder(
+                    itemCount: busesDocs.length,
+                    itemBuilder: (context, index) {
+                      return BusCard(
+                        bus: busesDocs[index],
+                      );
+                    });
+              }
+
+              if (snapshot.hasError) {
+                snapshot.error.printError();
+              }
+
+              return const Center(
+                child: CircularProgressIndicator.adaptive(),
               );
             }),
       ),
@@ -58,12 +103,10 @@ class SearchBusesState extends State<SearchBuses> {
 class BusCard extends StatelessWidget {
   const BusCard({
     Key? key,
-    required this.buses,
-    required this.index,
+    required this.bus,
   }) : super(key: key);
 
-  final List<Bus> buses;
-  final int index;
+  final Bus bus;
 
   @override
   Widget build(BuildContext context) {
@@ -92,26 +135,26 @@ class BusCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   Text(
-                    buses[index].routeName,
+                    '${bus.from} - ${bus.destination}',
                     style: Theme.of(context).textTheme.titleLarge!.copyWith(
                         fontWeight: FontWeight.bold, color: darkAccent),
                   ),
                   Text(
-                    '₹${buses[index].ticketPrice}',
+                    '₦${bus.ticketPrice}',
                     style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                        fontWeight: FontWeight.bold, color: radicalRed),
+                        fontWeight: FontWeight.bold, color: radicalGreen),
                   ),
                 ],
               ),
               Text(
-                buses[index].busType,
+                bus.busType,
                 style: Theme.of(context)
                     .textTheme
                     .titleSmall!
                     .copyWith(color: Colors.grey[500]),
               ),
               const Flexible(child: Divider()),
-              BusRouteWidget(buses: buses, index: index),
+              BusRouteWidget(bus: bus),
             ],
           ),
         ),
@@ -121,14 +164,9 @@ class BusCard extends StatelessWidget {
 }
 
 class BusRouteWidget extends StatelessWidget {
-  const BusRouteWidget({
-    Key? key,
-    required this.buses,
-    required this.index,
-  }) : super(key: key);
+  const BusRouteWidget({Key? key, required this.bus}) : super(key: key);
 
-  final List<Bus> buses;
-  final int index;
+  final Bus bus;
 
   @override
   Widget build(BuildContext context) {
@@ -141,7 +179,7 @@ class BusRouteWidget extends StatelessWidget {
               style: Theme.of(context).textTheme.labelSmall,
               children: [
                 TextSpan(
-                    text: '09:00 AM',
+                    text: bus.departureTime,
                     style: Theme.of(context)
                         .textTheme
                         .bodyMedium!
@@ -158,7 +196,7 @@ class BusRouteWidget extends StatelessWidget {
               style: Theme.of(context).textTheme.labelSmall,
               children: [
                 TextSpan(
-                  text: '11:20 AM',
+                  text: bus.arrivalTime,
                   style: Theme.of(context)
                       .textTheme
                       .bodyMedium!
@@ -170,13 +208,13 @@ class BusRouteWidget extends StatelessWidget {
             style: ButtonStyle(
                 elevation: MaterialStateProperty.all(3.0),
                 backgroundColor:
-                    MaterialStateColor.resolveWith((states) => radicalRed)),
+                    MaterialStateColor.resolveWith((states) => radicalGreen)),
             child: const Text(
               'Book Now',
               style: TextStyle(color: mystic),
             ),
             onPressed: () {
-              Get.toNamed('seatSelection', arguments: buses[index]);
+              Get.toNamed('seatSelection', arguments: bus);
               // Navigator.push(
               //     context,
               //     MaterialPageRoute(

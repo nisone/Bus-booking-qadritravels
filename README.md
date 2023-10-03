@@ -1,4 +1,4 @@
-# qadritravels
+# alutabus
 
 > A Bus Ticket Booking app
 

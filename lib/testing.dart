@@ -1,12 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
-import 'package:qadritravels/screens/notification_page.dart';
-import 'package:qadritravels/themes/colors.dart';
-import 'package:qadritravels/widgets/custom_appbar.dart';
-import 'package:qadritravels/widgets/custom_bottom_search.dart';
-import 'package:qadritravels/widgets/custom_date_selector.dart';
-import 'package:qadritravels/widgets/custom_recent_trip_card.dart';
+import 'package:alutabus/screens/notification_page.dart';
+import 'package:alutabus/themes/colors.dart';
+import 'package:alutabus/widgets/custom_appbar.dart';
+import 'package:alutabus/widgets/custom_bottom_search.dart';
+import 'package:alutabus/widgets/custom_date_selector.dart';
+import 'package:alutabus/widgets/custom_recent_trip_card.dart';
 
 class Testing extends StatefulWidget {
   const Testing({Key? key}) : super(key: key);

@@ -1,6 +1,13 @@
+import 'package:alutabus/screens/Bookings.dart';
+import 'package:alutabus/screens/Notifications.dart';
+import 'package:alutabus/screens/homepage.dart';
+import 'package:alutabus/screens/map_screen.dart';
+import 'package:alutabus/screens/start_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:qadritravels/themes/colors.dart';
+import 'package:alutabus/themes/colors.dart';
+import 'package:get/get.dart';
 
 class MyAccount extends StatefulWidget {
   const MyAccount({super.key});
@@ -27,13 +34,16 @@ class MyAccountState extends State<MyAccount> {
   //   return user;
   // }
 
-  List<String> settings = [
-    'My bookings',
-    'Recent trips',
-    'Notifications',
-    'Settings',
-    'Sign Out'
+  List<Map<String, dynamic>> settings = [
+    {'label': 'Buses location', 'routeWidget': const MapScreen()},
+    {'label': 'My bookings', 'routeWidget': const Bookings()},
+    {'label': 'Recent trips', 'routeWidget': const Bookings()},
+    {'label': 'Notifications', 'routeWidget': const Notifications()},
+    // {'label': 'Settings', 'routeWidget': null},
+    {'label': 'Sign Out', 'routeWidget': const StartScreen()},
   ];
+
+  final auth = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -42,18 +52,18 @@ class MyAccountState extends State<MyAccount> {
     return Scaffold(
       appBar: AppBar(
         elevation: 0.0,
-        backgroundColor: radicalRed,
+        backgroundColor: radicalGreen,
         leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () => Navigator.pop(context)),
       ),
       body: Container(
-        color: radicalRed,
+        color: radicalGreen,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(bottom: 32.0),
+              padding: const EdgeInsets.only(bottom: 20.0),
               child: Container(
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(
@@ -64,7 +74,7 @@ class MyAccountState extends State<MyAccount> {
                         width: 2.0)),
                 child: CircleAvatar(
                   backgroundColor: Colors.white,
-                  radius: 100,
+                  radius: 50,
                   child: Hero(
                       tag: 'profileAvatar',
                       child: Image.asset('assets/placeholder.png',
@@ -74,11 +84,10 @@ class MyAccountState extends State<MyAccount> {
             ),
             Padding(
               padding: const EdgeInsets.only(bottom: 16.0),
-              child: ElevatedButton(
-                child: const Text('Sign In'),
-                onPressed: () {
-                  //_handleSignIn();
-                },
+              child: Text(
+                auth.currentUser != null
+                    ? auth.currentUser!.email.toString()
+                    : 'Username',
               ),
             ),
             Flexible(
@@ -94,39 +103,29 @@ class MyAccountState extends State<MyAccount> {
                   borderRadius: BorderRadius.all(Radius.circular(16.0)),
                   color: backgroundColor,
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 8.0),
-                  child: ListView(
-                    children: settings.map((item) {
-                      return Column(
-                        children: <Widget>[
-                          ListTile(
-                            title: Text(item,
-                                style: const TextStyle(
-                                    fontSize: 20.0,
-                                    color: smoky,
-                                    fontWeight: FontWeight.bold)),
-                            onTap: () async {
-                              if (item == 'Sign Out') {
-                                //final User user = _auth.currentUser;
-                                // // if (user == null) {
-                                // //   print('No one has signed in.');
-                                // //   return;
-                                // // }
-                                // // _signOut();
-                                // // final String uid = user.uid;
-                                // print(uid + ' has successfully signed out.');
+                child: ListView(
+                  children: settings.map((item) {
+                    return Column(
+                      children: <Widget>[
+                        ListTile(
+                          title: Text(item['label'],
+                              style: const TextStyle(
+                                  color: smoky, fontWeight: FontWeight.bold)),
+                          onTap: () async {
+                            if (item['label'] == 'Sign Out') {
+                              final User? user = auth.currentUser;
+                              if (user != null) {
+                                await auth.signOut();
+                                Get.offAll(item['routeWidget']);
                               }
-                              if (kDebugMode) {
-                                print(item);
-                              }
-                            },
-                          ),
-                          const Divider(),
-                        ],
-                      );
-                    }).toList(),
-                  ),
+                            }
+                            Get.to(item['routeWidget'] ?? const MyHomePage());
+                          },
+                        ),
+                        const Divider(),
+                      ],
+                    );
+                  }).toList(),
                 ),
               ),
             ),

@@ -2,9 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
-import 'package:qadritravels/themes/colors.dart';
-import 'package:qadritravels/utils/bus.dart';
-import 'package:qadritravels/utils/seat_arrangement.dart';
+import 'package:alutabus/themes/colors.dart';
+import 'package:alutabus/utils/bus.dart';
 
 class SeatSelection extends StatefulWidget {
   const SeatSelection({Key? key}) : super(key: key);
@@ -14,7 +13,7 @@ class SeatSelection extends StatefulWidget {
 }
 
 class SeatSelectionState extends State<SeatSelection> {
-  double seatSize = 26;
+  double seatSize = 3;
   List<Map> seatSelected = [];
   List<Map> list = [];
 
@@ -31,16 +30,17 @@ class SeatSelectionState extends State<SeatSelection> {
 
   void seatSelectionMethod() {
     int i = 0;
-    var seats = seat['seat'];
-    numOfRows = seats!.length;
+    var seats = bus.seats;
+    numOfRows = seats.length;
     numOfColumns = seats[0].length;
     for (var seat in seats) {
       bool hasChair = false;
       int j = 1;
       for (var s in seat) {
         list.add({
+          'bus': bus,
           'index': list.length,
-          'price': 250,
+          'price': bus.ticketPrice,
           'type': s,
           'label': '$i${j.toString()}'
         });
@@ -83,7 +83,7 @@ class SeatSelectionState extends State<SeatSelection> {
     return Scaffold(
       appBar: AppBar(
         elevation: 0.0,
-        backgroundColor: radicalRed,
+        backgroundColor: radicalGreen,
         leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
@@ -94,8 +94,8 @@ class SeatSelectionState extends State<SeatSelection> {
     );
   }
 
-  Container buildContainer(BuildContext context, double seatLayoutWidth) {
-    return Container(
+  SizedBox buildContainer(BuildContext context, double seatLayoutWidth) {
+    return SizedBox(
       height: MediaQuery.of(context).size.height,
       child: Stack(
         children: <Widget>[
@@ -104,7 +104,7 @@ class SeatSelectionState extends State<SeatSelection> {
               borderRadius: BorderRadius.all(Radius.circular(0)),
             ),
             elevation: 4,
-            color: radicalRed,
+            color: radicalGreen,
             margin: const EdgeInsets.all(0),
             child: SizedBox(
               width: MediaQuery.of(context).size.width,
@@ -115,7 +115,7 @@ class SeatSelectionState extends State<SeatSelection> {
                 child: Column(
                   children: [
                     Text(
-                      bus.routeName,
+                      '${bus.from} - ${bus.destination}',
                       style: const TextStyle(
                         fontSize: 28.0,
                         fontWeight: FontWeight.bold,
@@ -123,7 +123,7 @@ class SeatSelectionState extends State<SeatSelection> {
                       ),
                     ),
                     Text(
-                      '₹${bus.ticketPrice}',
+                      '₦${bus.ticketPrice}',
                       style: const TextStyle(
                           fontSize: 18.0,
                           color: mystic,
@@ -192,12 +192,13 @@ class SeatSelectionState extends State<SeatSelection> {
                                 'Select Seats',
                                 style: Theme.of(context)
                                     .textTheme
-                                    .titleMedium
-                                    !.copyWith(
+                                    .titleMedium!
+                                    .copyWith(
                                         fontSize: Theme.of(context)
                                                 .textTheme
-                                                .titleMedium
-                                                !.fontSize! * scale,
+                                                .titleMedium!
+                                                .fontSize! *
+                                            scale,
                                         color:
                                             Palette.getContrastColor(context),
                                         fontWeight: FontWeight.w700),
@@ -215,7 +216,7 @@ class SeatSelectionState extends State<SeatSelection> {
                                   ),
                                   Icon(
                                     FontAwesomeIcons.couch,
-                                    color: radicalRed,
+                                    color: radicalGreen,
                                   ),
                                   Icon(
                                     FontAwesomeIcons.couch,
@@ -225,7 +226,8 @@ class SeatSelectionState extends State<SeatSelection> {
                               ),
                             ),
                             Container(
-                              padding: const EdgeInsets.only(left: 16, right: 16),
+                              padding:
+                                  const EdgeInsets.only(left: 16, right: 16),
                               child: buildSeatLayout(context, constraints),
                             ),
                           ],
@@ -245,21 +247,21 @@ class SeatSelectionState extends State<SeatSelection> {
             child: ElevatedButton(
               style: ButtonStyle(
                   backgroundColor:
-                      MaterialStateColor.resolveWith((states) => radicalRed)),
+                      MaterialStateColor.resolveWith((states) => radicalGreen)),
               onPressed: () {
                 if (kDebugMode) {
                   print(seatSelected.length);
                 }
-                if (seatSelected.length < 1) {
+                if (seatSelected.isEmpty) {
                   if (kDebugMode) {
                     print('Seat: ${seatSelected[1]['label']}');
                   }
                 } else {
-                  seatSelected.forEach((seat) {
+                  for (var seat in seatSelected) {
                     if (kDebugMode) {
                       print('Seats: ${seat['label']}');
                     }
-                  });
+                  }
                 }
                 Get.toNamed('confirmBooking', arguments: [seatSelected, bus]);
               },
@@ -279,10 +281,8 @@ class SeatSelectionState extends State<SeatSelection> {
 
     double seatLayoutWidth = width - 26;
     currentSize = (seatLayoutWidth) / numOfColumns;
-    if (scrollController == null) {
-      scrollController = ScrollController(
-          initialScrollOffset: (width - MediaQuery.of(context).size.width) / 2);
-    }
+    scrollController ??= ScrollController(
+        initialScrollOffset: (width - MediaQuery.of(context).size.width) / 2);
     return seatLayoutWidth;
   }
 
@@ -297,12 +297,14 @@ class SeatSelectionState extends State<SeatSelection> {
           String label = item['label'];
           bool isSelected = seatSelected.contains(item);
           return GestureDetector(
-            onTap: () {
-              if (kDebugMode) {
-                print('Tapped $item + $isSelected');
-              }
-              seatSelect(item);
-            },
+            onTap: type == 2
+                ? null
+                : () {
+                    if (kDebugMode) {
+                      print('Tapped $item + $isSelected');
+                    }
+                    seatSelect(item);
+                  },
             child: Container(
               width: seatSize,
               height: seatSize,
@@ -310,7 +312,7 @@ class SeatSelectionState extends State<SeatSelection> {
               margin: const EdgeInsets.all(2),
               decoration: type != 0
                   ? BoxDecoration(
-                      color: isSelected ? radicalRed : mystic,
+                      color: isSelected ? radicalGreen : mystic,
                       borderRadius: const BorderRadius.all(Radius.circular(4)),
                       border: Border.all(
                           color: Palette.getContrastColor(context)
@@ -326,11 +328,14 @@ class SeatSelectionState extends State<SeatSelection> {
                   : type == 1
                       ? Text(
                           label,
-                          style: Theme.of(context).textTheme.caption!.copyWith(
-                              fontSize: 9 * scale,
-                              color: !isSelected
-                                  ? Palette.getContrastColor(context)
-                                  : Colors.black),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall!
+                              .copyWith(
+                                  fontSize: 9 * scale,
+                                  color: !isSelected
+                                      ? Palette.getContrastColor(context)
+                                      : Colors.black),
                         )
                       : null,
             ),

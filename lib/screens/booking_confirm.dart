@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:qadritravels/themes/colors.dart';
+import 'package:alutabus/themes/colors.dart';
 
 class BookingConfirm extends StatelessWidget {
   const BookingConfirm({Key? key}) : super(key: key);
@@ -11,7 +11,7 @@ class BookingConfirm extends StatelessWidget {
       body: Container(
         width: double.maxFinite,
         height: double.maxFinite,
-        color: radicalRed,
+        color: radicalGreen,
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -38,7 +38,7 @@ class BookingConfirm extends StatelessWidget {
                         backgroundColor: MaterialStateColor.resolveWith(
                             (states) => Colors.amber.shade800)),
                     onPressed: () {
-                      Get.toNamed('searchBuses');
+                      Get.toNamed('/home');
                     },
                     child: const Text(
                       'Go To Home',

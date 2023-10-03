@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1092921202422",
+    "project_id": "aluta-bus-school-project",
+    "storage_bucket": "aluta-bus-school-project.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1092921202422:android:c28e30675c4cafa1e23ed7",
+        "android_client_info": {
+          "package_name": "com.alutabus.alutabus"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1092921202422-f1f33kpol7gn8c6oa7g8o2lgokh0pf3v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAQ79I9lYQDMeQO_OJQa9Lc-YC-_X8UD80"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1092921202422-f1f33kpol7gn8c6oa7g8o2lgokh0pf3v.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

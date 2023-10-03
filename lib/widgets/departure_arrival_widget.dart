@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:qadritravels/themes/colors.dart';
-
+import 'package:alutabus/themes/colors.dart';
 
 class DepartureArrivalWidget extends StatelessWidget {
   const DepartureArrivalWidget({
@@ -15,20 +14,16 @@ class DepartureArrivalWidget extends StatelessWidget {
         RichText(
           text: TextSpan(
               text: 'Departure\n',
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyMedium
-              !.copyWith(
-                color: Colors.amber.shade200,
-              ),
+              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                    color: Colors.amber.shade200,
+                  ),
               children: [
                 TextSpan(
                     text: '09:00 AM',
                     style: Theme.of(context)
                         .textTheme
-                        .bodyMedium
-                    !.copyWith(
-                        color: Colors.grey.shade300)),
+                        .bodyMedium!
+                        .copyWith(color: Colors.grey.shade300)),
               ]),
         ),
         const Icon(
@@ -38,20 +33,16 @@ class DepartureArrivalWidget extends StatelessWidget {
         RichText(
           text: TextSpan(
               text: 'Arrival\n',
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyMedium
-              !.copyWith(
-                color: Colors.amber.shade200,
-              ),
+              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                    color: Colors.amber.shade200,
+                  ),
               children: [
                 TextSpan(
                   text: '11:20 AM',
                   style: Theme.of(context)
                       .textTheme
-                      .bodyMedium
-                  !.copyWith(
-                      color: Colors.grey.shade300),
+                      .bodyMedium!
+                      .copyWith(color: Colors.grey.shade300),
                 ),
               ]),
         ),

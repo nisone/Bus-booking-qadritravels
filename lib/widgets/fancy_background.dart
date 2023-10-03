@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:qadritravels/themes/colors.dart';
+import 'package:alutabus/themes/colors.dart';
 import 'package:simple_animations/simple_animations.dart';
 
 class AnimatedWave extends StatelessWidget {
@@ -28,9 +28,8 @@ class AnimatedWave extends StatelessWidget {
             builder: (context, value, _) {
               double val = double.tryParse(value.toString())!.toDouble();
               return CustomPaint(
-                foregroundPainter: CurvePainter(
-                    value: val + offset!,
-                    color: color!),
+                foregroundPainter:
+                    CurvePainter(value: val + offset!, color: color!),
               );
             },
           ),
@@ -82,7 +81,7 @@ class AnimatedBackground extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tween = MovieTween()
-      ..tween('color1', ColorTween(begin: radicalRed, end: kobi),
+      ..tween('color1', ColorTween(begin: radicalGreen, end: kobi),
           duration: const Duration(seconds: 6))
       ..tween('color2', ColorTween(begin: smoky, end: kobi),
           duration: const Duration(seconds: 6));

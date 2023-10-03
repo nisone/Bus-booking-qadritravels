@@ -14,7 +14,7 @@ class LineDashedPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     var paint = Paint()
       ..color = color!
-      ..strokeWidth = (strokeWidth == null ? 2 : strokeWidth)!;
+      ..strokeWidth = (strokeWidth ?? 2);
     maxValue = maxValue;
     dashWidth = 5;
     dashSpace = 5;

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:qadritravels/themes/colors.dart';
-import 'package:qadritravels/widgets/custom_dotted_line.dart';
+import 'package:alutabus/themes/colors.dart';
+import 'package:alutabus/widgets/custom_dotted_line.dart';
 
 class CustomRecentTripCard extends StatelessWidget {
   final String? dayOfTheMonth;
@@ -25,8 +25,6 @@ class CustomRecentTripCard extends StatelessWidget {
         width: MediaQuery.of(context).size.width / 2,
         height: 220.0,
         child: Card(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
           elevation: 6.0,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -38,10 +36,12 @@ class CustomRecentTripCard extends StatelessWidget {
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      Text(dayOfTheMonth!,
+                      Text(
+                        dayOfTheMonth!,
                         style: const TextStyle(fontSize: 18.0),
                       ),
-                      IconButton(icon: const Icon(Icons.more_vert), onPressed: () {}),
+                      IconButton(
+                          icon: const Icon(Icons.more_vert), onPressed: () {}),
                     ],
                   ),
                 ),
@@ -52,15 +52,15 @@ class CustomRecentTripCard extends StatelessWidget {
                     children: <Widget>[
                       Text(
                         '$dateOfTheMonth',
-                        style:
-                            const TextStyle(fontSize: 52.0, color: Colors.lightBlue),
+                        style: const TextStyle(
+                            fontSize: 24.0, color: Colors.lightBlue),
                       ),
                       const SizedBox(height: 8.0),
                       Row(
                         children: <Widget>[
                           const Icon(
                             FontAwesomeIcons.circleDot,
-                            color: radicalRed,
+                            color: radicalGreen,
                             size: 18,
                           ),
                           const SizedBox(width: 4.0),
