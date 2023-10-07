@@ -1,6 +1,8 @@
 import 'package:alutabus/screens/Bookings.dart';
 import 'package:alutabus/screens/Notifications.dart';
+import 'package:alutabus/utils/paystack_payment.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:alutabus/screens/booking_confirm.dart';
 import 'package:alutabus/screens/confirm_booking.dart';
@@ -19,6 +21,8 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  Get.put(PaymentPaystackController());
 
   runApp(const Alutabus());
 }
@@ -40,7 +44,7 @@ class Alutabus extends StatelessWidget {
         GetPage(name: '/home', page: () => const MyHomePage()),
         GetPage(
             name: '/confirmBooking',
-            page: () => const ConfirmBooking(),
+            page: () => ConfirmBooking(),
             transition: Transition.rightToLeft),
         GetPage(name: '/seatSelection', page: () => const SeatSelection()),
         GetPage(name: '/myaccount', page: () => const MyAccount()),
@@ -53,6 +57,7 @@ class Alutabus extends StatelessWidget {
         GetPage(name: '/notifications', page: () => const Notifications()),
       ],
       home: const StartScreen(),
+      builder: EasyLoading.init(),
     );
   }
 }

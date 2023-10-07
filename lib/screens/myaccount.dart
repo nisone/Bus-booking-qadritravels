@@ -1,4 +1,6 @@
+import 'package:alutabus/screens/AdminScreen.dart';
 import 'package:alutabus/screens/Bookings.dart';
+import 'package:alutabus/screens/BusFinderScreen.dart';
 import 'package:alutabus/screens/Notifications.dart';
 import 'package:alutabus/screens/homepage.dart';
 import 'package:alutabus/screens/map_screen.dart';
@@ -35,6 +37,8 @@ class MyAccountState extends State<MyAccount> {
   // }
 
   List<Map<String, dynamic>> settings = [
+    {'label': 'Admin', 'routeWidget': const AdminScreen()},
+    {'label': 'Bus finder ', 'routeWidget': const BusFinderScreen()},
     {'label': 'Buses location', 'routeWidget': const MapScreen()},
     {'label': 'My bookings', 'routeWidget': const Bookings()},
     {'label': 'Recent trips', 'routeWidget': const Bookings()},

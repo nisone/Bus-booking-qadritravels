@@ -1,14 +1,20 @@
+import 'package:alutabus/screens/homepage.dart';
+import 'package:alutabus/utils/paystack_payment.dart';
 import 'package:alutabus/utils/ticket.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_paystack/flutter_paystack.dart';
 import 'package:get/get.dart';
 import 'package:alutabus/themes/colors.dart';
 import 'package:alutabus/utils/bus.dart';
 import 'package:alutabus/widgets/departure_arrival_widget.dart';
 
 class ConfirmBooking extends StatelessWidget {
-  const ConfirmBooking({Key? key}) : super(key: key);
+  ConfirmBooking({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -109,12 +115,20 @@ class ConfirmBooking extends StatelessWidget {
                   ),
                   onPressed: () async {
                     try {
+                      String email = FirebaseAuth.instance.currentUser!.email!;
                       String uid = FirebaseAuth.instance.currentUser!.uid;
+                      double amount =
+                          (bus.ticketPrice * seat.length).toDouble();
+
+                      if (!await pay(email, uid, amount)) {
+                        return;
+                      }
+
                       //TODO: save booking data to firestore
                       Ticket myTicket = Ticket(
                         uid: uid,
                         busId: bus.id,
-                        totalPrice: (bus.ticketPrice * seat.length).toDouble(),
+                        totalPrice: amount,
                         origin: bus.from,
                         destination: bus.destination,
                         seatsCount: seat.length,
@@ -122,7 +136,7 @@ class ConfirmBooking extends StatelessWidget {
                         departureTime: bus.departureTime,
                         arrivalTime: bus.arrivalTime,
                         status: true,
-                        isPaid: false,
+                        isPaid: true,
                       );
 
                       await FirebaseFirestore.instance
@@ -130,14 +144,18 @@ class ConfirmBooking extends StatelessWidget {
                           .doc()
                           .set(myTicket.toJson());
 
-                      if (await updateBusSeat(bus, seat)) {
-                        // TODO: handle payments
-                        // TODO: send ticket data to user email
-                        Get.toNamed('bookingConfirm');
-                      } else {
+                      if (!await updateBusSeat(bus, seat)) {
+                        //   // TODO: handle payments
+                        //   // TODO: send ticket data to user email
+                        //   Get.toNamed('bookingConfirm');
+                        // } else {
                         Get.showSnackbar(
                             const GetSnackBar(message: 'booking failed!'));
                       }
+
+                      EasyLoading.showSuccess('Ticket booked successful');
+
+                      Get.off(const MyHomePage());
                     } on Exception catch (e) {
                       e.printError();
                     }
@@ -206,6 +224,37 @@ class ConfirmBooking extends StatelessWidget {
       return status;
     }
 
+    return false;
+  }
+
+  PaymentPaystackController payment = Get.find<PaymentPaystackController>();
+  Future<bool> pay(String email, String uid, double amount) async {
+    try {
+      EasyLoading.show(status: 'Initializing payment');
+
+      CheckoutResponse? response =
+          await payment.checkout(email: email, amount: amount, uid: uid);
+
+      if (response == null) {
+        EasyLoading.showError('Failed to initialized payment');
+        return false;
+      }
+
+      if (!response.status) {
+        EasyLoading.showError(response.message);
+        return false;
+      }
+
+      return true;
+    } on PlatformException catch (e) {
+      if (kDebugMode) {
+        e.printError();
+      }
+      EasyLoading.showError(
+          'Service currently unavailable. Please check your connection');
+    } catch (e) {
+      EasyLoading.showError(e.toString());
+    }
     return false;
   }
 }

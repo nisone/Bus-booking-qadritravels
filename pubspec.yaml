@@ -45,6 +45,11 @@ dependencies:
   simple_animations: ^5.0.2
   intl: ^0.18.1
   get: ^4.6.5
+  flutter_paystack: ^1.0.6
+  flutter_easyloading: ^3.0.5
+
+dependency_overrides:
+  intl: ^0.18.1
 
 dev_dependencies:
   flutter_test:
