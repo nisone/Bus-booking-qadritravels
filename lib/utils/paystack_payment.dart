@@ -8,7 +8,7 @@ class PaymentPaystackController extends GetxController {
   final plugin = PaystackPlugin();
   final firestore = FirebaseFirestore.instance;
 
-  final livePubKey = 'pk_live_8f7064aa46fa0612a63c71d53421383a9d98a2cd';
+  final livePubKey = 'pk_live_ee81a641614b7d183e3487a35aaeaed2e2c5d315';
 
   @override
   void onInit() {
