@@ -27,74 +27,125 @@ class AdminScreen extends StatelessWidget {
                 itemCount: snapshot.data!.docs.length,
                 itemBuilder: (context, index) {
                   Map<String, dynamic> e = snapshot.data!.docs[index].data();
-                  return Column(
-                    children: [
-                      ListTile(
-                        leading: Container(
-                          padding: const EdgeInsets.all(8),
-                          color: e['status'] ? Colors.green : Colors.red,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                  return Card(
+                    margin: const EdgeInsets.all(8),
+                    elevation: 10,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        ListTile(
+                          leading: Container(
+                            padding: const EdgeInsets.all(8),
+                            color: e['status'] ? Colors.green : Colors.red,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  e['id'].toString().toUpperCase(),
+                                  style: const TextStyle(color: Colors.white),
+                                ),
+                              ],
+                            ),
+                          ),
+                          title: Text(
+                              'Bus from ${e['from']} to ${e['destination']}'),
+                          subtitle: Text(e['status']
+                              ? 'Arrived at ${e['heading']}'
+                              : 'Arriving to ${e['heading']} in ${Random(DateTime.now().millisecondsSinceEpoch.abs()).nextInt(15)} mins'),
+                        ),
+                        const Padding(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                          child: Row(
                             children: [
-                              Text(
-                                e['id'].toString().toUpperCase(),
-                                style: const TextStyle(color: Colors.white),
+                              Expanded(
+                                child: Text(
+                                  'Start trip to:',
+                                  textAlign: TextAlign.start,
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w700),
+                                ),
                               ),
                             ],
                           ),
                         ),
-                        title: Text(
-                            'Bus from ${e['from']} to ${e['destination']}'),
-                        subtitle: Text(e['status']
-                            ? 'Arrived at ${e['from']}'
-                            : 'Arriving to ${e['from']} in ${Random(DateTime.now().millisecondsSinceEpoch.abs()).nextInt(15)} mins'),
-                        trailing: Column(
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text('${e['seatsCount']} seat'),
-                            Text('${e['totalPrice']}'),
+                            Expanded(
+                              child: ElevatedButton(
+                                onPressed: () async {
+                                  try {
+                                    EasyLoading.show();
+                                    await FirebaseFirestore.instance
+                                        .collection('buses')
+                                        .doc(snapshot.data!.docs[index].id)
+                                        .update({
+                                      'heading': e['from'],
+                                      'status': false
+                                    });
+                                    EasyLoading.dismiss();
+                                  } on Exception catch (e) {
+                                    EasyLoading.showError(e.toString());
+                                  }
+                                },
+                                child: Text('${e['from']}'),
+                              ),
+                            ),
+                            Expanded(
+                              child: ElevatedButton(
+                                onPressed: () async {
+                                  try {
+                                    EasyLoading.show();
+                                    await FirebaseFirestore.instance
+                                        .collection('buses')
+                                        .doc(snapshot.data!.docs[index].id)
+                                        .update({
+                                      'heading': e['destination'],
+                                      'status': false
+                                    });
+                                    EasyLoading.dismiss();
+                                  } on Exception catch (e) {
+                                    EasyLoading.showError(e.toString());
+                                  }
+                                },
+                                child: Text('${e['destination']}'),
+                              ),
+                            ),
                           ],
                         ),
-                      ),
-                      Row(
-                        children: [
-                          ElevatedButton(
-                              onPressed: () async {
-                                try {
-                                  EasyLoading.show();
-                                  await FirebaseFirestore.instance
-                                      .collection('buses')
-                                      .doc(snapshot.data!.docs[index].id)
-                                      .update({
-                                    'seats': [
-                                      "0,0,0,0,0,0,1,1",
-                                      "0,0,0,0,1,1,1,1",
-                                      "0,0,0,0,1,1,1,1"
-                                    ],
-                                    'status': true
-                                  });
-                                  EasyLoading.dismiss();
-                                } on Exception catch (e) {
-                                  EasyLoading.showError(e.toString());
-                                }
-                              },
-                              child: Text('Free Bus')),
-                          ElevatedButton(
-                              onPressed: () async {
-                                try {
-                                  EasyLoading.show();
-                                  await FirebaseFirestore.instance
-                                      .collection('buses')
-                                      .doc(snapshot.data!.docs[index].id)
-                                      .update({'status': false});
-                                  EasyLoading.dismiss();
-                                } on Exception catch (e) {
-                                  EasyLoading.showError(e.toString());
-                                }
-                              },
-                              child: Text('Start Trip'))
-                        ],
-                      )
-                    ],
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: ElevatedButton(
+                                  onPressed: () async {
+                                    try {
+                                      EasyLoading.show();
+                                      await FirebaseFirestore.instance
+                                          .collection('buses')
+                                          .doc(snapshot.data!.docs[index].id)
+                                          .update({
+                                        'seats': [
+                                          "0,0,0,0,0,0,1,1",
+                                          "0,0,0,0,1,1,1,1",
+                                          "0,0,0,0,1,1,1,1"
+                                        ],
+                                        'status': true
+                                      });
+                                      EasyLoading.dismiss();
+                                    } on Exception catch (e) {
+                                      EasyLoading.showError(e.toString());
+                                    }
+                                  },
+                                  child: const Text('Free Bus')),
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
                   );
                 },
               );

@@ -30,65 +30,85 @@ class Bookings extends StatelessWidget {
                 itemCount: snapshot.data!.docs.length,
                 itemBuilder: (context, index) {
                   Map<String, dynamic> e = snapshot.data!.docs[index].data();
-                  return ListTile(
-                    onTap: () => e['status']
-                        ? showDialog(
-                            context: context,
-                            builder: (_) {
-                              return AlertDialog.adaptive(
-                                title: const Text('Warning!'),
-                                content: const Column(
-                                  children: [
-                                    Text('Cancel reservation?'),
-                                    Text(
-                                      'Note: Ticket price is not refundable.',
-                                      style: TextStyle(fontSize: 8),
-                                    )
-                                  ],
-                                ),
-                                actions: [
-                                  ElevatedButton(
-                                      onPressed: () {
-                                        cancelTicket(
-                                            e['busId'],
-                                            e['seatsNumber'],
-                                            snapshot
-                                                .data!.docs[index].reference);
-                                        Navigator.of(_).pop();
-                                      },
-                                      child: const Text('Yes')),
-                                  TextButton(
-                                      onPressed: () => Navigator.of(_).pop(),
-                                      child: const Text('No')),
-                                ],
-                              );
-                            },
-                          )
-                        : null,
-                    leading: Container(
-                      padding: const EdgeInsets.all(8),
-                      color: e['status'] ? Colors.green : Colors.red,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text(
-                            'Seats #',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                          Text(
-                            e['seatsNumber'].join(','),
-                            style: const TextStyle(color: Colors.white),
-                          ),
-                        ],
-                      ),
-                    ),
-                    title: Text('${e['origin']} - ${e['destination']}'),
-                    subtitle:
-                        Text('${e['departureTime']} - ${e['arrivalTime']}'),
-                    trailing: Column(
+                  return Card(
+                    child: Column(
                       children: [
-                        Text('${e['seatsCount']} seat'),
-                        Text('${e['totalPrice']}'),
+                        ListTile(
+                          leading: Container(
+                            padding: const EdgeInsets.all(8),
+                            color: e['status'] ? Colors.green : Colors.red,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Text(
+                                  'Seats #',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                Text(
+                                  e['seatsNumber'].join(','),
+                                  style: const TextStyle(color: Colors.white),
+                                ),
+                              ],
+                            ),
+                          ),
+                          title: Text('${e['origin']} - ${e['destination']}'),
+                          subtitle: Text(
+                              '${e['departureTime']} - ${e['arrivalTime']}'),
+                          trailing: Column(
+                            children: [
+                              Text('${e['seatsCount']} seat'),
+                              Text('${e['totalPrice']}'),
+                            ],
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: ElevatedButton(
+                                  onPressed: !e['status']
+                                      ? null
+                                      : () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (_) {
+                                              return AlertDialog.adaptive(
+                                                title: const Text('Warning!'),
+                                                content: const Column(
+                                                  children: [
+                                                    Text('Cancel reservation?'),
+                                                    Text(
+                                                      'Note: Ticket price is not refundable.',
+                                                      style: TextStyle(
+                                                          fontSize: 8),
+                                                    )
+                                                  ],
+                                                ),
+                                                actions: [
+                                                  ElevatedButton(
+                                                      onPressed: () {
+                                                        cancelTicket(
+                                                            e['busId'],
+                                                            e['seatsNumber'],
+                                                            snapshot
+                                                                .data!
+                                                                .docs[index]
+                                                                .reference);
+                                                        Navigator.of(_).pop();
+                                                      },
+                                                      child: const Text('Yes')),
+                                                  TextButton(
+                                                      onPressed: () =>
+                                                          Navigator.of(_).pop(),
+                                                      child: const Text('No')),
+                                                ],
+                                              );
+                                            },
+                                          );
+                                        },
+                                  child: Text('Cancel Booking')),
+                            ),
+                          ],
+                        )
                       ],
                     ),
                   );

@@ -19,21 +19,21 @@ class SearchBuses extends StatefulWidget {
 class SearchBusesState extends State<SearchBuses> {
   final List<Bus> buses = [
     Bus('bus_id_c7890', 'Phase II', 'Medicine', defaultSeats, 'NON-AC', 250,
-        '09:00', '10:00'),
+        '09:00', '10:00', 'heading', true),
     Bus('bus_id_c7890', 'Gym', 'Phase II', defaultSeats, 'NON-AC', 250, '09:00',
-        '10:00'),
+        '10:00', 'heading', true),
     Bus('bus_id_c7890', 'Samaru', 'Congo', defaultSeats, 'AC', 650, '09:00',
-        '10:00'),
+        '10:00', 'heading', true),
     Bus('bus_id_c7890', 'Samaru', 'Phase II', defaultSeats, 'AC', 450, '09:00',
-        '10:00'),
+        '10:00', 'heading', true),
     Bus('bus_id_c7890', 'ABUTH Shika', 'Congo', defaultSeats, 'AC', 1500,
-        '09:00', '10:00'),
+        '09:00', '10:00', 'heading', true),
     Bus('bus_id_c7890', 'Flyover', 'Congo', defaultSeats, 'AC', 1700, '09:00',
-        '10:00'),
+        '10:00', 'heading', true),
     Bus('bus_id_c7890', 'Samaru', 'IAR', defaultSeats, 'AC', 350, '09:00',
-        '10:00'),
+        '10:00', 'heading', true),
     Bus('bus_id_c7890', 'Flyover', 'ABUTH Shika', defaultSeats, 'AC', 210,
-        '09:00', '10:00'),
+        '09:00', '10:00', 'heading', true),
   ];
 
   @override
@@ -76,7 +76,9 @@ class SearchBusesState extends State<SearchBuses> {
                         busDoc['busType'],
                         busDoc['ticketPrice'],
                         busDoc['departureTime'],
-                        busDoc['arrivalTime']))
+                        busDoc['arrivalTime'],
+                        busDoc['heading'],
+                        busDoc['status']))
                     .toList();
                 return ListView.builder(
                     itemCount: busesDocs.length,

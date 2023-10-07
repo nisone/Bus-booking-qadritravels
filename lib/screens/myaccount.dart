@@ -2,6 +2,7 @@ import 'package:alutabus/screens/AdminScreen.dart';
 import 'package:alutabus/screens/Bookings.dart';
 import 'package:alutabus/screens/BusFinderScreen.dart';
 import 'package:alutabus/screens/Notifications.dart';
+import 'package:alutabus/screens/Trips.dart';
 import 'package:alutabus/screens/homepage.dart';
 import 'package:alutabus/screens/map_screen.dart';
 import 'package:alutabus/screens/start_screen.dart';
@@ -9,6 +10,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:alutabus/themes/colors.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 
 class MyAccount extends StatefulWidget {
@@ -41,7 +43,7 @@ class MyAccountState extends State<MyAccount> {
     {'label': 'Bus finder ', 'routeWidget': const BusFinderScreen()},
     {'label': 'Buses location', 'routeWidget': const MapScreen()},
     {'label': 'My bookings', 'routeWidget': const Bookings()},
-    {'label': 'Recent trips', 'routeWidget': const Bookings()},
+    {'label': 'Recent trips', 'routeWidget': const Trips()},
     {'label': 'Notifications', 'routeWidget': const Notifications()},
     // {'label': 'Settings', 'routeWidget': null},
     {'label': 'Sign Out', 'routeWidget': const StartScreen()},
@@ -122,6 +124,44 @@ class MyAccountState extends State<MyAccount> {
                                 await auth.signOut();
                                 Get.offAll(item['routeWidget']);
                               }
+                            }
+                            if (item['label'] == 'Admin') {
+                              TextEditingController code =
+                                  TextEditingController();
+                              showDialog(
+                                context: context,
+                                builder: (_) {
+                                  return AlertDialog.adaptive(
+                                    title: const Text('Admin login'),
+                                    content: Column(
+                                      children: [
+                                        Text('Enter admin code.'),
+                                        TextFormField(
+                                          controller: code,
+                                        )
+                                      ],
+                                    ),
+                                    actions: [
+                                      ElevatedButton(
+                                          onPressed: () {
+                                            if (code.text == '2023') {
+                                              Navigator.of(_).pop();
+                                              Get.to(item['routeWidget']);
+                                            } else {
+                                              EasyLoading.showError(
+                                                  'Invalid code!');
+                                            }
+                                          },
+                                          child: const Text('Submit')),
+                                      TextButton(
+                                          onPressed: () =>
+                                              Navigator.of(_).pop(),
+                                          child: const Text('Cancel')),
+                                    ],
+                                  );
+                                },
+                              );
+                              return;
                             }
                             Get.to(item['routeWidget'] ?? const MyHomePage());
                           },

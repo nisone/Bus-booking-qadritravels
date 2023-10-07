@@ -7,7 +7,18 @@ class Bus {
   final int ticketPrice;
   final String departureTime;
   final String arrivalTime;
+  String heading;
+  bool status;
 
-  Bus(this.id, this.from, this.destination, this.seats, this.busType,
-      this.ticketPrice, this.departureTime, this.arrivalTime);
+  Bus(
+      this.id,
+      this.from,
+      this.destination,
+      this.seats,
+      this.busType,
+      this.ticketPrice,
+      this.departureTime,
+      this.arrivalTime,
+      this.heading,
+      this.status);
 }

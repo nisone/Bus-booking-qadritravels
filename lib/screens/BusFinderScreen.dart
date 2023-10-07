@@ -1,7 +1,10 @@
 import 'dart:math';
 
+import 'package:alutabus/utils/bus.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:get/get.dart';
 
 class BusFinderScreen extends StatelessWidget {
   const BusFinderScreen({Key? key}) : super(key: key);
@@ -27,6 +30,27 @@ class BusFinderScreen extends StatelessWidget {
                 itemBuilder: (context, index) {
                   Map<String, dynamic> e = snapshot.data!.docs[index].data();
                   return ListTile(
+                    onTap: !e['status']
+                        ? () => EasyLoading.showError('Bus not available!')
+                        : () {
+                            Get.toNamed('seatSelection',
+                                arguments: Bus(
+                                    e['id'],
+                                    e['from'],
+                                    e['destination'],
+                                    (e['seats']).map((element) {
+                                      return element
+                                          .split(',')
+                                          .map((e) => int.tryParse(e))
+                                          .toList();
+                                    }).toList(),
+                                    e['busType'],
+                                    e['ticketPrice'],
+                                    e['departureTime'],
+                                    e['arrivalTime'],
+                                    e['heading'],
+                                    e['status']));
+                          },
                     leading: Container(
                       padding: const EdgeInsets.all(8),
                       color: e['status'] ? Colors.green : Colors.red,
@@ -42,14 +66,8 @@ class BusFinderScreen extends StatelessWidget {
                     ),
                     title: Text('Bus from ${e['from']} to ${e['destination']}'),
                     subtitle: Text(e['status']
-                        ? 'Arrived at ${e['from']}'
-                        : 'Arriving to ${e['from']} in ${Random(DateTime.now().millisecondsSinceEpoch.abs()).nextInt(15)} mins'),
-                    trailing: Column(
-                      children: [
-                        Text('${e['seatsCount']} seat'),
-                        Text('${e['totalPrice']}'),
-                      ],
-                    ),
+                        ? 'Arrived at ${e['heading']}'
+                        : 'Arriving to ${e['from']} in ${Random(DateTime.now().millisecondsSinceEpoch.abs()).nextInt(15) + 1} mins'),
                   );
                 },
               );

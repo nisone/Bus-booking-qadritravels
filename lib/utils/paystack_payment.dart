@@ -55,7 +55,7 @@ class PaymentPaystackController extends GetxController {
         method: CheckoutMethod.card,
         logo: CircleAvatar(
           backgroundImage: Image.asset(
-            'assets/images/bus-stop.png',
+            'assets/bus-stop.png',
             fit: BoxFit.contain,
           ).image,
         ),
